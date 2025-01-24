@@ -245,3 +245,112 @@ final class NotificationController extends AbstractController
     }
 }
 ```
+
+## Pattern Decorator
+
+### Interface de la stratégie
+
+```php
+<?php
+
+namespace App\Permissions;
+
+interface PermissionInterface
+{
+    public function checkAccess(): bool;
+}
+```
+
+```php
+<?php
+
+namespace App\Permissions;
+
+class BaseUser implements PermissionInterface
+{
+    public function checkAccess(): bool
+    {
+        return false;
+    }
+
+}
+
+<?php
+
+namespace App\Permissions;
+
+class AdminPermissionDecorator implements PermissionInterface
+{
+    public function __construct(
+        private PermissionInterface $permission
+    ){
+    }
+
+    public function checkAccess(): bool
+    {
+        return true;
+    }
+}
+
+<?php
+
+namespace App\Permissions;
+
+class ReadOnlyPermissionDecorator implements PermissionInterface
+{
+    public function __construct(
+        protected PermissionInterface $user
+    ){}
+
+    public function checkAccess(): bool
+    {
+        return $this->user->checkAccess() || $this->canEditContent();
+    }
+
+    private function canEditContent()
+    {
+        return true;
+    }
+}
+
+```
+
+### Utilisation dans un controller
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Permissions\AdminPermissionDecorator;
+use App\Permissions\BaseUser;
+use App\Permissions\EditorPermissionDecorator;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+final class DecoratorController extends AbstractController
+{
+    #[Route('/decorator', name: 'app_decorator')]
+    public function index(): Response
+    {
+        $decorateUser = new BaseUser();
+        $role = 'ROLE_ADMIN';
+
+        if ($role === 'ROLE_ADMIN') {
+            $decorateUser = new AdminPermissionDecorator($decorateUser);
+        }
+
+        if ($role === 'ROLE_EDITOR') {
+            $decorateUser = new EditorPermissionDecorator($decorateUser);
+        }
+
+        if ($decorateUser->checkAccess()) {
+            return new Response("Accès à la page d'édition accordé");
+        }
+
+        return new Response("Accès refusé");
+    }
+}
+
+```
