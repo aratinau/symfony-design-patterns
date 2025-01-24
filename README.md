@@ -133,3 +133,115 @@ final class StrategyController extends AbstractController
 }
 
 ```
+
+## Pattern Factory
+
+https://notification
+
+### Interface de la stratégie
+
+```php
+<?php
+
+namespace App\Notification;
+
+interface NotificationInterface
+{
+    public function send(string $message): void;
+}
+```
+
+### Implémentations spécifiques
+
+```php
+<?php
+
+namespace App\Notification;
+
+class EmailNotification implements NotificationInterface
+{
+    public function send(string $message): void
+    {
+        echo "Email envoyé : $message" ;
+    }
+
+}
+
+<?php
+
+namespace App\Notification;
+
+class PushNotification implements NotificationInterface
+{
+    public function send(string $message): void
+    {
+        echo "Push envoyé : $message" ;
+    }
+
+}
+
+<?php
+
+namespace App\Notification;
+
+class SMSNotification implements NotificationInterface
+{
+    public function send(string $message): void
+    {
+        echo "SMS envoyé : $message" ;
+    }
+
+}
+
+```
+
+### La factory
+
+```php
+<?php
+
+namespace App\Notification;
+
+class NotificationFactory
+{
+    public static function create(string $type): NotificationInterface
+    {
+        return match ($type) {
+            'email' => new EmailNotification(),
+            'sms' => new PushNotification(),
+            'push' => new PushNotification(),
+            default => throw new \Exception('Invalid notification type'),
+        };
+    }
+}
+
+```
+
+### Utilisation dans un controller
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Notification\NotificationFactory;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+final class NotificationController extends AbstractController
+{
+    #[Route('/notification', name: 'app_notification')]
+    public function index(): Response
+    {
+        $notificationType = 'email'; // ou 'sms', 'push'
+
+        $notification = NotificationFactory::create($notificationType);
+        $notification->send("Hello, voici un message de notification");
+
+        echo '<br />';
+
+        return new Response("Notification envoyée avec succès");
+    }
+}
+```
