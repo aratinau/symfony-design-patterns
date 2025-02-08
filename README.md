@@ -4,6 +4,25 @@
 
 `make up`
 
+## Resources
+
+![01.png](docs/01.png)
+https://www.baeldung.com/cs/design-state-pattern-vs-strategy-pattern#strategy-vs-state
+![02.png](docs/02.png)
+https://symfony.com/doc/current/service_container/factories.html
+![03.png](docs/03.png)
+https://www.youtube.com/watch?v=aBOrVRKK3fA
+![04.png](docs/04.png)
+https://dev.to/altesack/strategy-pattern-in-symfony-4o9h
+![05.png](docs/05.png)
+https://www.prestaconcept.net/blog/symfony/5-design-patterns-que-vous-avez-utilise-au-quotidien-avec-symfony
+![06.png](docs/06.png)
+https://www.prestaconcept.net/blog/symfony/le-pattern-strategie-avec-symfony
+![07.png](docs/07.png)
+https://dev.to/technivek/le-design-pattern-observer-un-systeme-de-notification-puissant-3fjf
+![08.png](docs/08.png)
+https://www.jpsymfony.com/design_patterns/le-design-pattern-observer-avec-symfony2
+
 ## Pattern Strategy
 
 https://dev.to/technivek/simplifier-la-gestion-des-comportements-avec-le-pattern-strategy-en-php-et-symfony-51km
